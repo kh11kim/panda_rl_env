@@ -1,7 +1,7 @@
 import numpy as np
 import gym
 import panda_rl_env
-#from rl-baselines3-zoo.utils.rrt import Node, RRT
+from rrt import Node, RRT
 from stable_baselines3 import TD3
 from stable_baselines3.common.callbacks import BaseCallback
 
@@ -14,7 +14,6 @@ model = TD3("MultiInputPolicy", env, learning_rate=0.001,replay_buffer_kwargs={"
 class RRTCallback(BaseCallback):
     def __init__(self, env, verbose=0):
         super(RRTCallback, self).__init__(verbose)
-        self.env = env
 
     def _on_rollout_start(self) -> None:
         """
@@ -39,6 +38,7 @@ class RRTCallback(BaseCallback):
         """
         This event is triggered before updating the policy.
         """
+        self.env = self.training_env
         buf = self.model.replay_buffer
         last_done = buf.dones[buf.pos]
         if last_done == False:
